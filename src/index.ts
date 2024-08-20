@@ -46,31 +46,35 @@ class CinammonBot {
 
     listenToPancakeMessages(){
         this.client.on(Events.MessageCreate, async (message) => {
-            if (
-                message.author.bot &&
-                message.author.displayName === "Pancake"
-            ) {
-                const { author, content, embeds  } = message;
-                message.channel.send({ embeds: embeds, content: content });
-                console.log("author:", author);
-                const embed = embeds[0];
-                if (!embed) return
-                const { title, description }  = embed;
-                if (title === 'Now Playing') {
-                    if(!description) return;
-                    const lines = description.split('\n');
-                    const [ song, artist ] = lines[0].split(' - ');
-                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                    const [ _, user ] = lines[lines.length - 1].split('Requested by: <@');
-                    const cleanedUser = user.slice(0, -1);    
-                    const userRecord = {
-                        userId: cleanedUser,
-                        song,
-                        artist
-                    };
-                    console.log(userRecord);
-                    userPlayedSong(cleanedUser, song, artist);
+            try {
+                if (
+                    message.author.bot &&
+                    message.author.displayName === "Pancake"
+                ) {
+                    const { author, content, embeds  } = message;
+                    message.channel.send({ embeds: embeds, content: content });
+                    console.log("author:", author);
+                    const embed = embeds[0];
+                    if (!embed) return
+                    const { title, description }  = embed;
+                    if (title === 'Now Playing') {
+                        if(!description) return;
+                        const lines = description.split('\n');
+                        const [ song, artist ] = lines[0].split(' - ');
+                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                        const [ _, user ] = lines[lines.length - 1].split('Requested by: <@');
+                        const cleanedUser = user.slice(0, -1);    
+                        const userRecord = {
+                            userId: cleanedUser,
+                            song,
+                            artist
+                        };
+                        console.log(userRecord);
+                        userPlayedSong(cleanedUser, song, artist);
+                    }
                 }
+            } catch (error) {
+                console.error("Error handling message", error);
             }
         });
     }
@@ -100,9 +104,13 @@ class CinammonBot {
 
     addClientEventHandlers() {
         this.client.on(Events.InteractionCreate, (interaction) => {
-            this.interactionHandler.handleInteraction(
-                interaction as ChatInputCommandInteraction 
-            );
+            try {
+                this.interactionHandler.handleInteraction(
+                    interaction as ChatInputCommandInteraction 
+                );
+            } catch (error) {
+                console.error("Error handling interaction", error);
+            }
         });
     }
 }
