@@ -26,7 +26,7 @@ export class GenerateImage implements Command {
         console.log(prompt);
         try {
             const responseContent = await fetch(
-                `https://generate-image-wb7qdgvxxq-uc.a.run.app?prompt=${prompt}`
+                `${process.env.IMAGE_GENERATION_URL}?prompt=${prompt}`
             )
             if (!responseContent.ok) {
                 throw new Error(`HTTP error! status: ${responseContent.status}`);

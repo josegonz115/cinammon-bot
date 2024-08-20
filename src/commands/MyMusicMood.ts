@@ -19,7 +19,7 @@ export class MyMusicMoodCommand implements Command {
         if (!top10Songs) {
             return interaction.editReply("You have not played any songs yet");
         }
-        const chartResponse = await fetch(`https://us-central1-cinammon-bot.cloudfunctions.net/make_feature_chart?track_ids=${top10Songs.map(song => song.track_id).join(",")}`);
+        const chartResponse = await fetch(`${process.env.CHART_GENERATION_URL}?track_ids=${top10Songs.map(song => song.track_id).join(",")}`);
         if(!chartResponse.ok){
             return interaction.reply("Failed to generate mood chart");
         }
